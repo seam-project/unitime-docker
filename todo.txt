@@ -1,0 +1,21 @@
+Step note: uncomment mysql-connector-java dependency in pom.xml
+- Tomcat home is available at /usr/local/tomcat
+
+What the Docker images do I need
+- tomcat:9.0
+    - Need to install maven
+    - Need to store maven repo somewhere (unitime_maven volume)
+    - Needs access to code (code:/opt/unitime) (store path to project in .env as $UNITIME_PATH)
+- mysql:5.7
+    - Needs to run the migration scripts in Documentation/Database/MySQL
+    - Needs to store the data somewhere (unitime_mysql_volume)
+    - Needs access to the migration scripts (scripts:/migrations)
+
+Needed commands
+- Ask the user for the project location if not known
+- init: builds the docker compose, builds the initial schema
+- start: starts the web server and mysql
+- populate [FILENAME]: populates db using FILENAME as the script
+- build: builds and deploys the application to the web server
+- restart: restart docker compose
+- stop: stop docker compose

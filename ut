@@ -1,0 +1,50 @@
+#!/bin/bash
+SCRIPT=$(realpath "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+cd $SCRIPTPATH
+if [ ! -f .env ]; then
+    echo "Enter the absolute path of the unitime project (the directory which contains the pom.xml for the \
+unitime project)"
+    read PROJECT_PATH || exit 1
+    if [ ! -f $PROJECT_PATH/pom.xml ]; then
+        echo "Can't find $PROJECT_PATH/pom.xml" && exit 1
+    fi
+    echo "UNITIME_PATH=$PROJECT_PATH" > .env
+fi
+
+case $* in
+    init )
+        docker-compose build
+        ;;
+    start )
+        docker-compose up
+        ;;
+    create-schema )
+        docker-compose exec mysql bash -c 'mysql -uroot -proot -f </migrations/schema.sql'
+        ;;
+    build)
+        docker-compose exec tomcat bash -c \
+        'cd /opt/unitime && ant && cp Distributions/UniTime.war /usr/local/tomcat/webapps/.'
+        ;;
+    deploy )
+        docker-compose exec tomcat bash -c \
+        'cd /opt/unitime && cp Distributions/UniTime.war /usr/local/tomcat/webapps/.'
+        ;;
+    populate* )
+        docker-compose exec mysql bash -c "mysql -uroot -proot -f </migrations/$2"
+        ;;
+    shell|bash )
+        docker-compose exec tomcat bash
+        ;;
+    mysql )
+        docker-compose exec mysql bash -c 'mysql -uroot -proot'
+        ;;
+
+    stop )
+        docker-compose down
+        ;;
+    restart )
+        docker-compose restart
+        ;;
+
+esac

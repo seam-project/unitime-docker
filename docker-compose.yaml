@@ -1,0 +1,24 @@
+version: '3'
+volumes:
+    mysql:
+        external: false
+services:
+    tomcat:
+        container_name: unitime_tomcat
+        build: .
+        ports:
+            - '8080:8080'
+        volumes:
+            - ${UNITIME_PATH}:/opt/unitime
+        environment:
+            JAVA_OPTS: "-Djava.awt.headless=true -Xmx2048m"
+        depends_on:
+            - mysql
+    mysql:
+        container_name: unitime_mysql
+        image: mysql:5.7
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        volumes:
+            - ${UNITIME_PATH}/Documentation/Database/MySQL:/migrations
+            - mysql:/var/lib/mysql
