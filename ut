@@ -20,15 +20,16 @@ case $* in
         docker-compose up
         ;;
     create-schema )
-        docker-compose exec mysql bash -c 'mysql -uroot -proot -f </migrations/schema.sql'
+        docker-compose exec mysql bash -c 'mysql -uroot -proot -f </migrations/schema.sql && \
+        mysql -uroot -proot -f </extra-user.sql'
         ;;
-    build)
+    build )
         docker-compose exec tomcat bash -c \
-        'cd /opt/unitime && ant && cp Distributions/UniTime.war /usr/local/tomcat/webapps/.'
+        'cd /opt/unitime && mvn package && cp target/UniTime.war /usr/local/tomcat/webapps/.'
         ;;
     deploy )
         docker-compose exec tomcat bash -c \
-        'cd /opt/unitime && cp Distributions/UniTime.war /usr/local/tomcat/webapps/.'
+        'cd /opt/unitime && cp target/UniTime.war /usr/local/tomcat/webapps/.'
         ;;
     populate* )
         docker-compose exec mysql bash -c "mysql -uroot -proot -f </migrations/$2"
@@ -39,12 +40,25 @@ case $* in
     mysql )
         docker-compose exec mysql bash -c 'mysql -uroot -proot'
         ;;
-
     stop )
         docker-compose down
         ;;
     restart )
         docker-compose restart
         ;;
-
+    * )
+        echo -e "One of the following arguments must be entered:
+init                build the docker images
+start               create and starts the docker containers
+==== The following commands require the containers to be started ====
+create-schema       create the initial database schema
+build               package the application and deploy it on the server
+deploy              deploy the application without recompiling it
+populate [SCRIPT]   populate the database with one of the scripts specified in the UniTime project.
+                    The currently available ones are woebegon-data.sql and blank-data.sql
+bash                open a bash shell in the tomcat container
+mysql               open a mysql shell in the mysql container
+stop                stop the running docker containers
+restart             restart the running docker containers"
+        ;;
 esac

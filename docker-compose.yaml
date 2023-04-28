@@ -2,21 +2,26 @@ version: '3'
 volumes:
     mysql:
         external: false
+    maven:
+        external: false
 services:
     tomcat:
         container_name: unitime_tomcat
-        build: .
+        build: ./tomcat
         ports:
             - '8080:8080'
         volumes:
             - ${UNITIME_PATH}:/opt/unitime
+            - maven:/root/.m2
         environment:
             JAVA_OPTS: "-Djava.awt.headless=true -Xmx2048m"
+        network_mode: "host"
         depends_on:
             - mysql
     mysql:
         container_name: unitime_mysql
-        image: mysql:5.7
+        build: ./mysql
+        network_mode: "host"
         environment:
             MYSQL_ROOT_PASSWORD: root
         volumes:
