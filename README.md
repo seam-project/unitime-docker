@@ -1,6 +1,6 @@
 # unitime-docker
 
-Helps build development Docker images and containers for [unitime](https://github.com/unitime/unitime).
+Helps build and configure development Docker images and containers for [unitime](https://github.com/unitime/unitime).
 
 ## Pre-requisites
 
