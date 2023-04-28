@@ -43,6 +43,9 @@ case $* in
     stop )
         docker-compose down
         ;;
+    undeploy )
+        docker-compose exec tomcat bash -c 'rm /usr/local/tomcat/webapps/UniTime.war'
+        ;;
     restart )
         docker-compose restart
         ;;
@@ -58,6 +61,7 @@ populate [SCRIPT]   populate the database with one of the scripts specified in t
                     The currently available ones are woebegon-data.sql and blank-data.sql
 bash                open a bash shell in the tomcat container
 mysql               open a mysql shell in the mysql container
+undeploy            undeploys the war from the server
 stop                stop the running docker containers
 restart             restart the running docker containers"
         ;;
