@@ -8,8 +8,6 @@ services:
     tomcat:
         container_name: unitime_tomcat
         build: ./tomcat
-        ports:
-            - '8080:8080'
         volumes:
             - ${UNITIME_PATH}:/opt/unitime
             - maven:/root/.m2
