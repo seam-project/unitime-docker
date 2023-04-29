@@ -23,9 +23,15 @@ case $* in
         docker-compose exec mysql bash -c 'mysql -uroot -proot -f </migrations/schema.sql && \
         mysql -uroot -proot -f </extra-user.sql'
         ;;
-    build )
+    build* )
+        clean_argument=""
+        space=""
+        if [ $2 = "clean" ]; then
+            space=" "
+            clean_argument="clean"
+        fi
         docker-compose exec tomcat bash -c \
-        'cd /opt/unitime && mvn package && cp target/UniTime.war /usr/local/tomcat/webapps/.'
+        "cd /opt/unitime && mvn$space$clean_argument package && cp target/UniTime.war /usr/local/tomcat/webapps/."
         ;;
     deploy )
         docker-compose exec tomcat bash -c \
@@ -56,6 +62,7 @@ start               create and starts the docker containers
 ==== The following commands require the containers to be started ====
 create-schema       create the initial database schema
 build               package the application and deploy it on the server
+build clean         delete the previous packaging target files and package the application
 deploy              deploy the application without recompiling it
 populate [SCRIPT]   populate the database with one of the scripts specified in the UniTime project.
                     The currently available ones are woebegon-data.sql and blank-data.sql
