@@ -26,7 +26,7 @@ case $* in
     build* )
         clean_argument=""
         space=""
-        if [ $2 = "clean" ]; then
+        if [ "$2" = "clean" ]; then
             space=" "
             clean_argument="clean"
         fi
